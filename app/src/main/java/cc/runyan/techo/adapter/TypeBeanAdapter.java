@@ -13,6 +13,9 @@ import java.util.List;
 import cc.runyan.techo.R;
 import cc.runyan.techo.po.TypeBean;
 
+/**
+ * girdView 中设置view
+ */
 public class TypeBeanAdapter extends BaseAdapter {
     public TypeBeanAdapter(Context context, List<TypeBean> typeBeanList) {
         this.context = context;

@@ -9,8 +9,5 @@ public class OutComeFragment extends BaseRecordFragment {
         return Constants.OUTCOME_KIND;
     }
 
-    @Override
-    public void insertIntoDB() {
 
-    }
 }

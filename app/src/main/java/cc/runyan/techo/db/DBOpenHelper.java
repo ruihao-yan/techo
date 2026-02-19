@@ -18,12 +18,13 @@ public class DBOpenHelper extends SQLiteOpenHelper {
     // 只有第一次创建数据库的时候才会执行
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // 收支类型表
         String sql = "CREATE TABLE type(id integer primary key autoincrement, type_name varchar(10), image_id integer, s_image_id integer, kind integer)";
         db.execSQL(sql);
-
         insertType(db);
-
-
+        // 记账表
+        sql = "CREATE TABLE record(id integer primary key autoincrement, type_name varchar(10), s_image_id integer, remark varchar(100), money float, time varchar(60), kind integer)";
+        db.execSQL(sql);
     }
 
     private void insertType(SQLiteDatabase db) {
@@ -44,7 +45,6 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         db.execSQL(sql, new Object[]{"水电煤", R.mipmap.ic_shuidianfei, R.mipmap.ic_shuidianfei_fs, 0});
         db.execSQL(sql, new Object[]{"通讯", R.mipmap.ic_tongxun, R.mipmap.ic_tongxun_fs, 0});
         db.execSQL(sql, new Object[]{"人情往来", R.mipmap.ic_renqingwanglai, R.mipmap.ic_renqingwanglai_fs, 0});
-
 
         // 收入
         db.execSQL(sql, new Object[]{"其他", R.mipmap.in_qt, R.mipmap.in_qt_fs, 1});
