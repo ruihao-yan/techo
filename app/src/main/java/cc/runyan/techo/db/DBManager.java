@@ -95,6 +95,11 @@ public class DBManager {
         db.execSQL(sql, new Object[]{recordBean.getTypename(), recordBean.getsImageId(), recordBean.getRemark(), recordBean.getMoney(), recordBean.getTime(), recordBean.getKind()});
     }
 
+    public static void deleteRecord(int id) {
+        String sql = "DELETE FROM record WHERE id = ?";
+        db.execSQL(sql, new Object[]{id});
+    }
+
     public static AmountCome getAllAmountByTime(Integer year, Integer month, Integer day) {
         AmountCome amountCome = new AmountCome();
         List<RecordBean> records = getRecords(year, month, day);

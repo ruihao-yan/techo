@@ -50,6 +50,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         listView = findViewById(R.id.main_lv);
         listView.setAdapter(recordAdapter);
 
+        // 设置长按删除回调
+        recordAdapter.setOnDeleteButtonListener(id -> {
+            DBManager.deleteRecord(id);
+            loadDate();
+            initOrUpdateInAndOutText();
+        });
+
         // 设置 头部的header
         addHeaderView();
 
