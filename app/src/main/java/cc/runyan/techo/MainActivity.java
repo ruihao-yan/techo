@@ -1,5 +1,6 @@
 package cc.runyan.techo;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +17,9 @@ import cc.runyan.techo.adapter.RecordAdapter;
 import cc.runyan.techo.constant.Constants;
 import cc.runyan.techo.db.DBManager;
 import cc.runyan.techo.dto.AmountCome;
+import cc.runyan.techo.po.Budget;
 import cc.runyan.techo.po.RecordBean;
+import cc.runyan.techo.utils.BudgetDialog;
 import cc.runyan.techo.utils.Time;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -33,8 +36,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private RecordAdapter recordAdapter;
     private View headerView;
 
-    private TextView topOutTv, topInTv, topBudgetTv, topGraph, topDayInAndOut;
+    private TextView topOutTv, topInTv, topBudgetTv, topGraph, topDayInAndOut, descBudgetTv;
     private ImageView topShowIv;
+
+    private int clickCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +67,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         initOrUpdateInAndOutText();
 
+
     }
+
 
     /**
      * 初始化或者更新收入和支出
@@ -73,6 +80,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         topOutTv.setText("￥" + allInAndOutByMonth.getOutCome());
         topInTv.setText("￥" + allInAndOutByMonth.getInCome());
+
+        Budget lastBudget = DBManager.getLastBudget();
+
+        if (lastBudget != null && lastBudget.getMonth() == Time.getCurMonth()) {
+            topBudgetTv.setText(String.valueOf(lastBudget.getBudget() - allInAndOutByMonth.getOutCome()));
+        }
 
 
         // 获取当日的支出和收入金额
@@ -108,11 +121,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         topBudgetTv = headerView.findViewById(R.id.item_mainlv_top_budget);
         topGraph = headerView.findViewById(R.id.item_mainlv_graph);
         topShowIv = headerView.findViewById(R.id.item_mainlv_top_show);
+        descBudgetTv = headerView.findViewById(R.id.item_mainlv_top_desc_budget);
 
         topDayInAndOut = headerView.findViewById(R.id.item_mainlv_in_out);
 
         topShowIv.setOnClickListener(this);
         topBudgetTv.setOnClickListener(this);
+        descBudgetTv.setOnClickListener(this);
 
     }
 
@@ -133,6 +148,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
         loadDate();
         initOrUpdateInAndOutText();
+
     }
 
     private void loadDate() {
@@ -152,11 +168,30 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.item_mainlv_top_budget) { // 点击预算
+        if (v.getId() == R.id.item_mainlv_top_budget || v.getId() == R.id.item_mainlv_top_desc_budget) { // 点击预算
+            BudgetDialog budgetDialog = new BudgetDialog(this);
 
-
+            budgetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    initOrUpdateInAndOutText();
+                }
+            });
+            budgetDialog.show();
         } else if (v.getId() == R.id.item_mainlv_top_show) { // 是否显示 消费余额
 
+            if (clickCount % 2 == 0) {
+                topBudgetTv.setText("***");
+                topInTv.setText("***");
+                topOutTv.setText("***");
+            } else {
+                initOrUpdateInAndOutText();
+            }
+            if (clickCount == 0) {
+                clickCount = 1;
+            } else {
+                clickCount = 0;
+            }
         }
     }
 }

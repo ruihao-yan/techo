@@ -4,14 +4,17 @@ package cc.runyan.techo.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import cc.runyan.techo.constant.Constants;
 import cc.runyan.techo.dto.AmountCome;
+import cc.runyan.techo.po.Budget;
 import cc.runyan.techo.po.RecordBean;
 import cc.runyan.techo.po.TypeBean;
+import cc.runyan.techo.utils.Time;
 
 /**
  * 对数据库中内容进行操作
@@ -114,5 +117,32 @@ public class DBManager {
         return amountCome;
     }
 
+
+    public static Budget getLastBudget() {
+        logD("查询当前月份的预算");
+        String sql = "SELECT * FROM budget WHERE month = ? order by id desc";
+        Cursor cursor = db.rawQuery(sql, new String[]{"" + Time.getCurMonth()});
+        if (cursor.moveToNext()) {
+            Budget budget = new Budget();
+            budget.setId(cursor.getInt(cursor.getColumnIndexOrThrow("id")));
+            budget.setBudget(cursor.getFloat(cursor.getColumnIndexOrThrow("budget")));
+            budget.setYear(cursor.getInt(cursor.getColumnIndexOrThrow("year")));
+            budget.setMonth(cursor.getInt(cursor.getColumnIndexOrThrow("month")));
+            budget.setDay(cursor.getInt(cursor.getColumnIndexOrThrow("day")));
+            return budget;
+        }
+        return null;
+    }
+
+    public static void insertIntoBudget(Budget budget) {
+        logD("插入预算" + budget.toString());
+        String sql = "INSERT INTO budget(budget, year, month, day) values(?, ?, ?, ?)";
+        db.execSQL(sql, new Object[]{budget.getBudget(), budget.getYear(), budget.getMonth(), budget.getDay()});
+    }
+
+
+    private static void logD(String message) {
+        Log.d("数据库", message);
+    }
 
 }

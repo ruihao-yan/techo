@@ -25,6 +25,10 @@ public class DBOpenHelper extends SQLiteOpenHelper {
         // 记账表
         sql = "CREATE TABLE record(id integer primary key autoincrement, type_name varchar(10), s_image_id integer, remark varchar(100), money float, time varchar(60), kind integer)";
         db.execSQL(sql);
+
+        // 预算表
+        sql = "CREATE TABLE budget(id integer primary key autoincrement, budget float, year integer, month integer, day integer)";
+        db.execSQL(sql);
     }
 
     private void insertType(SQLiteDatabase db) {
